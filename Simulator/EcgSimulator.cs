@@ -15,12 +15,12 @@ namespace Simulator
         private static TimeSpan initTs = TimeSpan.FromMilliseconds(-250);
         private static int _globalBufferIndex = 0;
 
-        public static IObservable<EcgSample> SimulateEcg()
+        public static IObservable<EcgSample> SimulateEcgAsObservable()
         {
             IEnumerable<EcgSample> list = CreateSampels();
             var sampleObservable = list.ToObservable(new EventLoopScheduler());
 
-            IObservable<EcgSample> reapeted = sampleObservable.Repeat(3); //.Do(Print);
+            IObservable<EcgSample> reapeted = sampleObservable.Repeat(1); //.Do(Print);
             IObservable<IList<EcgSample>> buffered = reapeted.Buffer(250);
             IObservable<object> timerObservable = new MMTimer().ToObservable(250);
 

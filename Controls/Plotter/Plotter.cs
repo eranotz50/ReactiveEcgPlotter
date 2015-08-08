@@ -8,6 +8,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -79,7 +80,7 @@ namespace Controls.Plotter
 
 						
 			// (2) an Observable of the ms. passed between each render event.			
-			var renderer = CompositionTargetToObservable()
+			/*var renderer = CompositionTargetToObservable()
 				.TimeInterval().Select(ti => ti.Interval.Milliseconds).Where( ms => ms > 0).Publish();
 
 			IDisposable firstSubscriptionDisposable = Disposable.Empty;
@@ -108,7 +109,7 @@ namespace Controls.Plotter
 				//_pending.Enqueue(delta);
 			});
 			
-			_renderDisposable = renderer.Subscribe(Draw);
+			_renderDisposable = renderer.Subscribe(Draw);*/
 		}				
 
 		void Plotter_Unloaded(object sender, RoutedEventArgs e)
@@ -153,7 +154,7 @@ namespace Controls.Plotter
 			writeableBmp.DrawRectangle(xActual, 0, xActual + 1, _height, clearColor);
 		}
 
-		private IObservable<object> CompositionTargetToObservable()
+		private static IObservable<object> CompositionTargetToObservable()
 		{
 			var observable = Observable.FromEventPattern(
 				handler => CompositionTarget.Rendering += handler,
@@ -201,17 +202,41 @@ namespace Controls.Plotter
 		public static readonly DependencyProperty InputObservableProperty =
 			DependencyProperty.Register("InputObservable", typeof(IObservable<EcgSample>), typeof(Plotter), new PropertyMetadata(Observable.Empty<EcgSample>(), OnInputObservableChanged));
 
-		private static void OnInputObservableChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-		{
-            var initialValue = Delta.Create(new EcgSample { X = -1 }, new EcgSample { X = -1 });
-            
+        //var initialValue = Delta.Create(new EcgSample { X = -1 }, new EcgSample { X = -1 });
+		private async static void OnInputObservableChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{            
             // (1) An observable of EcgSamples (X,Y) Values. 
-			var observable = (IObservable<EcgSample>) e.NewValue;			
+			var observable = (IObservable<EcgSample>) e.NewValue;
+            
+            //observable.Subscribe(s => Debug.WriteLine(s));  // (1) 
+
 			var normalized = observable.Select(NormalizeSample);
 
 			// (1) An observable of Delta (x1,y1) (x2,y2) Values. 
 			_samplesObservable = normalized.Scan(new EcgSample {X = -1}, (prev, curr) => prev.X != curr.X ? curr : prev)
 				.DistinctUntilChanged().CombineWithPrevious(Delta.Create);
+
+            
+
+          // _samplesDisposable =  _samplesObservable.Subscribe(s => Debug.WriteLine(s));
+
+          
+            /* IObservable<EcgBuffer> zipped = timerObservable
+                .TimeInterval()
+                .Scan(initTs, (prevTs, currTs) => currTs.Interval + prevTs)
+                .Zip(buffered, (interval, b) =>
+                {
+                    return new EcgBuffer { Buffer = b, TimeStamp = interval, Index = _globalBufferIndex++ };
+                });
+             */
+
+		    var renderObservable = CompositionTargetToObservable().TimeInterval().Select(ti => ti.Interval.Milliseconds);
+            
+
+            
+                        
+
+		    renderObservable.Subscribe(ms => Debug.WriteLine(ms));
 		}
 	}
 	
@@ -251,12 +276,7 @@ namespace Controls.Plotter
 			}
 
 			return string.Format(" ( {0} , {1} )  ( {2} , {3} )",P1.X,P1.Y,P2.X,P2.Y);
-		}
-
-		public void Print()
-		{
-			Debug.WriteLine(this.ToString());
-		}
+		}	
 	}
 
 }

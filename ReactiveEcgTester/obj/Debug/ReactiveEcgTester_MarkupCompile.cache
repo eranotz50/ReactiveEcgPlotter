@@ -4,16 +4,16 @@
 winexe
 C#
 .cs
-C:\Users\Owner\Desktop\RRRR\ReactiveEcgTester\ReactiveEcgTester\obj\Debug\
+C:\Users\Owner\ecgtest\ReactiveEcgPlotter\ReactiveEcgTester\obj\Debug\
 ReactiveEcgTester
 none
 false
 DEBUG;TRACE
-C:\Users\Owner\Desktop\RRRR\ReactiveEcgTester\ReactiveEcgTester\App.xaml
+C:\Users\Owner\ecgtest\ReactiveEcgPlotter\ReactiveEcgTester\App.xaml
 22051011834
 11125965250
 11-1951777999
-751407310499
+752138893237
 MainView.xaml;Views\EcgView.xaml;
 
 False

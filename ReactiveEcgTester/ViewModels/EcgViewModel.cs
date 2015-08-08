@@ -17,8 +17,8 @@ namespace ReactiveEcgTester.ViewModels
 
     public class EcgViewModel : Screen
     {
-        private static IDisposable _disposable = Disposable.Empty;
-
+        private  IDisposable _disposable = Disposable.Empty;
+     
         public EcgViewModel(IEcgParser filePharser)
         {
             //.Subscribe(Print); 
@@ -27,9 +27,9 @@ namespace ReactiveEcgTester.ViewModels
         protected override void OnInitialize()
         {
             base.OnInitialize();
-            var ecgObservable = EcgSimulator.SimulateEcg();
-
-             _disposable = ecgObservable.Subscribe(s => Debug.WriteLine(s));
+            
+            /*var _ecgObservable = EcgSimulator.SimulateEcgAsObservable();
+            _disposable = _ecgObservable.Subscribe(s => Debug.WriteLine(s));*/
         }
 
         protected override void OnDeactivate(bool close)
@@ -37,12 +37,12 @@ namespace ReactiveEcgTester.ViewModels
             base.OnDeactivate(close);
             _disposable.Dispose();
         }
-   
 
-       /* public IObservable<EcgSample> SamplesObservable
+
+        public IObservable<EcgSample> EcgObservable
         {
-            get { return CreateObservable(); } //; }
-        }*/
+            get { return EcgSimulator.SimulateEcgAsObservable(); } //; }
+        }
     }
 }
 
