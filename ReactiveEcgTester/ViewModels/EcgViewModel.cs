@@ -28,8 +28,8 @@ namespace ReactiveEcgTester.ViewModels
         {
             base.OnInitialize();
             
-            /*var _ecgObservable = EcgSimulator.SimulateEcgAsObservable();
-            _disposable = _ecgObservable.Subscribe(s => Debug.WriteLine(s));*/
+             var _ecgObservable = EcgSimulator.SimulateEcgAsObservable();
+            _disposable = _ecgObservable.Subscribe(s => Debug.WriteLine(s));
         }
 
         protected override void OnDeactivate(bool close)
@@ -39,10 +39,10 @@ namespace ReactiveEcgTester.ViewModels
         }
 
 
-        public IObservable<EcgSample> EcgObservable
+        /*public IObservable<EcgSample> EcgObservable
         {
             get { return EcgSimulator.SimulateEcgAsObservable(); } //; }
-        }
+        }*/
     }
 }
 
